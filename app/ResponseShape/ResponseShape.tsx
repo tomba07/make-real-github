@@ -54,6 +54,7 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 		const [pagesUrl, setPagesUrl] = useState('')
 		const [repoUrl, setRepoUrl] = useState('')
 		const [showGithubInfo, setShowGithubInfo] = useState(false)
+		const [isDeploying, setIsDeploying] = useState(false)
 
 		const handleInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
 			setInputValue(e.target.value)
@@ -106,13 +107,14 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 
 		const handleGithubClicked = useCallback(() => {
 			setShowGithubInfo(!showGithubInfo)
-			if (!showGithubInfo) {
+			if (!showGithubInfo && inputValue.length === 0) {
 				generateRepoName()
 			}
 		}, [showGithubInfo])
 
 		const handleDeploy = useCallback(async () => {
 			try {
+				setIsDeploying(true)
 				const response = await deployToGithub(inputValue, shape.props.html)
 				setPagesUrl(response.pagesUrl)
 				setRepoUrl(response.repoUrl)
@@ -130,6 +132,8 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 					title: 'Something went wrong',
 					description,
 				})
+			} finally {
+				setIsDeploying(false)
 			}
 		}, [inputValue, shape.props.html])
 
@@ -168,18 +172,21 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 							Repo Name:
 						</label>
 						<input id="github-input" onChange={handleInputChange} value={inputValue} />
-						<button
-							className="deployButton"
-							onClick={handleDeploy}
-							onPointerDown={stopEventPropagation}
-							disabled={!inputValue?.trim()}
-							style={{
-								opacity: !inputValue?.trim() ? 0.5 : 1,
-								cursor: !inputValue?.trim() ? 'auto' : 'pointer',
-							}}
-						>
-							Deploy
-						</button>
+						<div style={{ display: 'flex', flex: 'row', gap: '4px', alignItems: 'center', marginTop: 'var(--space-4)' }}>
+							<button
+								className="deployButton"
+								onClick={handleDeploy}
+								onPointerDown={stopEventPropagation}
+								disabled={!inputValue?.trim() || isDeploying}
+								style={{
+									opacity: !inputValue?.trim() || isDeploying ? 0.5 : 1,
+									cursor: !inputValue?.trim() || isDeploying ? 'auto' : 'pointer',
+								}}
+							>
+								Deploy
+							</button>
+							{isDeploying && <DefaultSpinner />}
+						</div>
 						{repoUrl && (
 							<div style={{ marginTop: 'var(--space-4)', pointerEvents: 'all' }}>
 								<a

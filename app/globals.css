@@ -181,6 +181,5 @@
 	margin: var(--space-1);
 	padding: 6px;
 	pointer-events: all;
-	margin-top: var(--space-4);
 	width: 60px
 }
