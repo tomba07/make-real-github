@@ -227,6 +227,7 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 							})
 						}
 					}}
+					onTouchEnd={stopEventPropagation}
 					onPointerDown={stopEventPropagation}
 				>
 					<Icon icon="duplicate" />
@@ -248,6 +249,7 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 					onClick={() => {
 						handleGithubClicked()
 					}}
+					onTouchEnd={stopEventPropagation}
 					onPointerDown={stopEventPropagation}
 				>
 					<Icon icon="github" />
