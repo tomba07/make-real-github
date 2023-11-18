@@ -148,15 +148,14 @@
 
 .github-info {
 	position: absolute;
-	bottom: -50px;
+	top: 65px;
+	right: -210px;
 	display: flex;
-	flex-direction: row;
-	width: 400px;
-	gap: 8px;
+	flex-direction: column;
+	width: 200px;
 	background-color: var(--color-low);
 	border-radius: 8px;
-	padding: 6px;
-	align-items: center;
+	padding: 12px;
 }
 
 .github-info input {
@@ -182,4 +181,6 @@
 	margin: var(--space-1);
 	padding: 6px;
 	pointer-events: all;
+	margin-top: var(--space-4);
+	width: 60px
 }

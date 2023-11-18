@@ -44,11 +44,12 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 		const toast = useToasts()
 		const editor = useEditor()
 		const { addToast } = useToasts()
-		const [inputValue, setInputValue] = useState('');
+		const [inputValue, setInputValue] = useState('')
+		const [showGithubInfo, setShowGithubInfo] = useState(false)
 
 		const handleInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
 			if (process.env.NODE_ENV === 'development') {
-				setInputValue(e.target.value);
+				setInputValue(e.target.value)
 			}
 		}, [])
 
@@ -56,6 +57,10 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 			// Implement what should happen when the button is clicked
 			console.log('Deploy clicked with input value:', inputValue)
 		}, [inputValue])
+
+		const handleGithubClicked = useCallback(() => {
+			setShowGithubInfo(!showGithubInfo)
+		}, [showGithubInfo])
 
 		const handleDeployToGithub = useCallback(
 			async (html: string) => {
@@ -103,25 +108,26 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 						<DefaultSpinner />
 					</div>
 				)}
-				<div className="github-info">
-					<label style={{whiteSpace: 'nowrap'}}htmlFor="github-input">Repo Name:</label>
-					<input
-						id="github-input"
-						onChange={handleInputChange}
-					/>
-					<button
-						className="deployButton"
-						onClick={handleDeploy}
-						onPointerDown={stopEventPropagation}
-						disabled={!inputValue?.trim()}
-						style={{
-							opacity: !inputValue?.trim() ? 0.5: 1,
-							cursor: !inputValue?.trim() ? 'auto': 'pointer',
-						}}
-					>
-						Deploy
-					</button>
-				</div>
+				{showGithubInfo && (
+					<div className="github-info">
+						<label style={{ whiteSpace: 'nowrap' }} htmlFor="github-input">
+							Repo Name:
+						</label>
+						<input id="github-input" onChange={handleInputChange} />
+						<button
+							className="deployButton"
+							onClick={handleDeploy}
+							onPointerDown={stopEventPropagation}
+							disabled={!inputValue?.trim()}
+							style={{
+								opacity: !inputValue?.trim() ? 0.5 : 1,
+								cursor: !inputValue?.trim() ? 'auto' : 'pointer',
+							}}
+						>
+							Deploy
+						</button>
+					</div>
+				)}
 				<div
 					style={{
 						position: 'absolute',
@@ -160,9 +166,10 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 						justifyContent: 'center',
 						cursor: 'pointer',
 						pointerEvents: 'all',
+						color: showGithubInfo ? 'grey' : 'black'
 					}}
 					onClick={() => {
-						handleDeployToGithub(shape.props.html)
+						handleGithubClicked()
 					}}
 					onPointerDown={stopEventPropagation}
 				>
