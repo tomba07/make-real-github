@@ -163,6 +163,7 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 				const deployed = await checkGitHubPagesDeployment(pagesUrl)
 				if (deployed) {
 					setIsPageDeployed(true)
+					return
 				} else {
 					await new Promise((resolve) => setTimeout(resolve, POLLING_INTERVAL))
 				}

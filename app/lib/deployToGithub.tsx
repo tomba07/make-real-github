@@ -26,7 +26,7 @@ export async function deployToGithub(
 		fullName = repoData.full_name,
 		repoUrl = repoData.html_url
 
-	console.log('Repository created:', repoData)
+	console.log('Repository created:')
 	await addHtmlContent(fullName, htmlContent, octokit)
 	console.log('HTML content added')
 	const pagesUrl = await enableGitHubPages(fullName, octokit)
@@ -34,7 +34,7 @@ export async function deployToGithub(
 	return { pagesUrl, repoUrl }
 }
 
-export async function checkGitHubPagesDeployment(pagesUrl: string) {
+export async function checkGitHubPagesDeployment(pagesUrl: string): Promise<boolean> {
 	try {
 		const response = await fetch(pagesUrl)
 
@@ -43,9 +43,11 @@ export async function checkGitHubPagesDeployment(pagesUrl: string) {
 			return true
 		} else {
 			console.log(`Site not deployed yet.`)
+			return false
 		}
 	} catch (error) {
 		console.error('Error checking GitHub Pages:', error)
+		return false
 	}
 }
 
