@@ -11,7 +11,7 @@ import {
 	useToasts,
 	useEditor,
 } from '@tldraw/tldraw'
-import { ChangeEvent, useCallback } from 'react'
+import { ChangeEvent, useState, useCallback } from 'react'
 import { deployToGithub } from '../lib/deployToGithub'
 
 export type ResponseShape = TLBaseShape<
@@ -44,17 +44,18 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 		const toast = useToasts()
 		const editor = useEditor()
 		const { addToast } = useToasts()
+		const [inputValue, setInputValue] = useState('');
 
 		const handleInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
 			if (process.env.NODE_ENV === 'development') {
-				localStorage.setItem('github_repo_name', e.target.value)
+				setInputValue(e.target.value);
 			}
 		}, [])
 
 		const handleDeploy = useCallback(() => {
 			// Implement what should happen when the button is clicked
-			console.log('Deploy clicked with input value:', localStorage.getItem('github_repo_name'))
-		}, [])
+			console.log('Deploy clicked with input value:', inputValue)
+		}, [inputValue])
 
 		const handleDeployToGithub = useCallback(
 			async (html: string) => {
@@ -103,14 +104,20 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 					</div>
 				)}
 				<div className="github-info">
+					<label style={{whiteSpace: 'nowrap'}}htmlFor="github-input">Repo Name:</label>
 					<input
-						defaultValue={localStorage.getItem('makeitreal_key') ?? ''}
+						id="github-input"
 						onChange={handleInputChange}
 					/>
 					<button
 						className="deployButton"
 						onClick={handleDeploy}
 						onPointerDown={stopEventPropagation}
+						disabled={!inputValue?.trim()}
+						style={{
+							opacity: !inputValue?.trim() ? 0.5: 1,
+							cursor: !inputValue?.trim() ? 'auto': 'pointer',
+						}}
 					>
 						Deploy
 					</button>

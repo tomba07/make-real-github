@@ -151,16 +151,17 @@
 	bottom: -50px;
 	display: flex;
 	flex-direction: row;
-	max-width: 300px;
-	width: 100%;
-	gap: 4px;
+	width: 400px;
+	gap: 8px;
 	background-color: var(--color-low);
 	border-radius: 8px;
 	padding: 6px;
+	align-items: center;
 }
 
 .github-info input {
 	all: inset;
+	padding: 4px 6px;
 	border-radius: 4px;
 	color: transparent;
 	border: none;
@@ -178,7 +179,7 @@
 	border: none;
 	font: inherit;
 	border-radius: var(--radius-2);
-	margin: var(--space-2);
-	cursor: pointer;
+	margin: var(--space-1);
+	padding: 6px;
 	pointer-events: all;
 }
