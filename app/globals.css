@@ -145,3 +145,40 @@
 	justify-content: center;
 	cursor: pointer;
 }
+
+.github-info {
+	position: absolute;
+	bottom: -50px;
+	display: flex;
+	flex-direction: row;
+	max-width: 300px;
+	width: 100%;
+	gap: 4px;
+	background-color: var(--color-low);
+	border-radius: 8px;
+	padding: 6px;
+}
+
+.github-info input {
+	all: inset;
+	border-radius: 4px;
+	color: transparent;
+	border: none;
+	background: var(--color-panel);
+	width: 100%;
+	height: 32px;
+	font-size: 12px;
+	font-family: Inter, sans-serif;
+	color: var(--color-text-0);
+}
+
+.deployButton {
+	background: var(--color-primary);
+	color: white;
+	border: none;
+	font: inherit;
+	border-radius: var(--radius-2);
+	margin: var(--space-2);
+	cursor: pointer;
+	pointer-events: all;
+}

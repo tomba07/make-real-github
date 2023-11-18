@@ -11,7 +11,7 @@ import {
 	useToasts,
 	useEditor,
 } from '@tldraw/tldraw'
-import { useCallback } from 'react'
+import { ChangeEvent, useCallback } from 'react'
 import { deployToGithub } from '../lib/deployToGithub'
 
 export type ResponseShape = TLBaseShape<
@@ -44,6 +44,17 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 		const toast = useToasts()
 		const editor = useEditor()
 		const { addToast } = useToasts()
+
+		const handleInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+			if (process.env.NODE_ENV === 'development') {
+				localStorage.setItem('github_repo_name', e.target.value)
+			}
+		}, [])
+
+		const handleDeploy = useCallback(() => {
+			// Implement what should happen when the button is clicked
+			console.log('Deploy clicked with input value:', localStorage.getItem('github_repo_name'))
+		}, [])
 
 		const handleDeployToGithub = useCallback(
 			async (html: string) => {
@@ -91,6 +102,19 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 						<DefaultSpinner />
 					</div>
 				)}
+				<div className="github-info">
+					<input
+						defaultValue={localStorage.getItem('makeitreal_key') ?? ''}
+						onChange={handleInputChange}
+					/>
+					<button
+						className="deployButton"
+						onClick={handleDeploy}
+						onPointerDown={stopEventPropagation}
+					>
+						Deploy
+					</button>
+				</div>
 				<div
 					style={{
 						position: 'absolute',
