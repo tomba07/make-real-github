@@ -45,19 +45,22 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 		const editor = useEditor()
 		const { addToast } = useToasts()
 
-		const handleDeployToGithub = useCallback(async (html: String) => {
-			console.log('deploy to github')
-			try {
-				await deployToGithub(html)
-			} catch (e) {
-				console.error(e)
-				addToast({
-					icon: 'cross-2',
-					title: 'Something went wrong',
-					description: (e as Error).message.slice(0, 100),
-				})
-			}
-		}, [editor, addToast])
+		const handleDeployToGithub = useCallback(
+			async (html: string) => {
+				console.log('deploy to github')
+				try {
+					const sUrl = await deployToGithub(html)
+				} catch (e) {
+					console.error(e)
+					addToast({
+						icon: 'cross-2',
+						title: 'Something went wrong',
+						description: (e as Error).message.slice(0, 100),
+					})
+				}
+			},
+			[editor, addToast]
+		)
 
 		return (
 			<HTMLContainer className="tl-embed-container" id={shape.id}>
