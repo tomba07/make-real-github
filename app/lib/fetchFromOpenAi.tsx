@@ -2,7 +2,7 @@
 
 export async function fetchFromOpenAi(
 	providedApiKey: string,
-	body: GPT4VCompletionRequest
+	body: GPT4VCompletionRequest | GPT4CompletionRequest
 ): Promise<GPT4VCompletionResponse> {
 	const apiKey = providedApiKey ?? process.env.OPENAI_API_KEY
 	debugger;
@@ -57,6 +57,27 @@ export type GPT4VMessage = {
 
 export type GPT4VCompletionRequest = {
 	model: 'gpt-4-vision-preview'
+	messages: GPT4VMessage[]
+	functions?: unknown[] | undefined
+	function_call?: unknown | undefined
+	stream?: boolean | undefined
+	temperature?: number | undefined
+	top_p?: number | undefined
+	max_tokens?: number | undefined
+	n?: number | undefined
+	best_of?: number | undefined
+	frequency_penalty?: number | undefined
+	presence_penalty?: number | undefined
+	logit_bias?:
+		| {
+				[x: string]: number
+		  }
+		| undefined
+	stop?: (string[] | string) | undefined
+}
+
+export type GPT4CompletionRequest = {
+	model: 'gpt-4-1106-preview'
 	messages: GPT4VMessage[]
 	functions?: unknown[] | undefined
 	function_call?: unknown | undefined

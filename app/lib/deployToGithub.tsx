@@ -1,39 +1,35 @@
 'use server'
 
-import { Editor, TLShapeId, createShapeId } from '@tldraw/tldraw'
-import { ResponseShape } from '../ResponseShape/ResponseShape'
-import { getSelectionAsImageDataUrl } from './getSelectionAsImageDataUrl'
-import {
-	GPT4VCompletionResponse,
-	GPT4VMessage,
-	MessageContent,
-	fetchFromOpenAi,
-} from './fetchFromOpenAi'
 import { Octokit } from '@octokit/core'
 
 const token = process.env.GITHUB_API_KEY
 const octokit = new Octokit({ auth: token })
 
-export async function deployToGithub(htmlContent: string): Promise<string> {
-	try {
-		// Create a new repository
-		const response = await octokit.request('POST /user/repos', {
-			name: 'new-repo-name',
-			private: false,
-			description: 'This is a new repository',
-		})
+export type RepoCreationResponse = {
+	repoUrl: string | undefined
+	pagesUrl: string | undefined
+}
 
-		const repoData = response.data
-		console.log('Repository created:', repoData)
+export async function deployToGithub(
+	repoName: string,
+	htmlContent: string
+): Promise<RepoCreationResponse> {
+	// Create a new repository
+	const response = await octokit.request('POST /user/repos', {
+		name: repoName,
+		private: false,
+		description: 'This is a new repository',
+	})
 
-		// Add a README file
-		await addReadme(repoData.full_name)
-		await addHtmlContent(repoData.full_name, htmlContent)
-		return await enableGitHubPages(repoData.full_name)
-	} catch (error) {
-		console.error('Error creating repository:', error)
-		return ''
-	}
+	const repoData = response.data,
+		repoUrl = repoData.full_name
+
+	console.log('Repository created:', repoData)
+	await addHtmlContent(repoUrl, htmlContent)
+	console.log('HTML content added')
+	const pagesUrl = await enableGitHubPages(repoUrl)
+
+	return { pagesUrl, repoUrl }
 }
 
 async function addReadme(repoName: string) {
@@ -69,7 +65,7 @@ async function addHtmlContent(repoFullName: string, htmlContent: string) {
 	}
 }
 
-async function enableGitHubPages(repoFullName: string): Promise<string>{
+async function enableGitHubPages(repoFullName: string): Promise<string> {
 	try {
 		await octokit.request('POST /repos/{owner}/{repo}/pages', {
 			owner: repoFullName.split('/')[0],

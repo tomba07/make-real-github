@@ -13,6 +13,12 @@ import {
 } from '@tldraw/tldraw'
 import { ChangeEvent, useState, useCallback } from 'react'
 import { deployToGithub } from '../lib/deployToGithub'
+import {
+	GPT4VCompletionResponse,
+	GPT4VMessage,
+	MessageContent,
+	fetchFromOpenAi,
+} from '../lib/fetchFromOpenAi'
 
 export type ResponseShape = TLBaseShape<
 	'response',
@@ -48,36 +54,73 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 		const [showGithubInfo, setShowGithubInfo] = useState(false)
 
 		const handleInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-			if (process.env.NODE_ENV === 'development') {
-				setInputValue(e.target.value)
-			}
+			setInputValue(e.target.value)
 		}, [])
 
-		const handleDeploy = useCallback(() => {
-			// Implement what should happen when the button is clicked
-			console.log('Deploy clicked with input value:', inputValue)
-		}, [inputValue])
+		const generateRepoName = async () => {
+			const prompt = await buildPromptForOpenAi()
+
+			try {
+				const apiKeyFromDangerousApiKeyInput = (
+					document.body.querySelector('#openai_key_risky_but_cool') as HTMLInputElement
+				)?.value
+
+				const openAiResponse = await fetchFromOpenAi(apiKeyFromDangerousApiKeyInput, {
+					model: 'gpt-4-1106-preview',
+					max_tokens: 4096,
+					temperature: 0,
+					messages: prompt,
+				})
+
+				populateRepoNameInput(openAiResponse)
+			} catch (e) {
+				throw e
+			}
+		}
+
+		const populateRepoNameInput = async (openAiResponse: GPT4VCompletionResponse) => {
+			if (openAiResponse.error) {
+				throw new Error(openAiResponse.error.message)
+			}
+
+			setInputValue(openAiResponse.choices[0].message.content)
+		}
+
+		const buildPromptForOpenAi = async (): Promise<GPT4VMessage[]> => {
+			const userMessages: MessageContent = [
+				{
+					type: 'text',
+					text: `Create a meaningful github repository name for the following html file:
+					${shape.props.html}
+					Respond ONLY with the repository name.`,
+				},
+			]
+
+			// combine the user prompt with the system prompt
+			return [{ role: 'user', content: userMessages }]
+		}
 
 		const handleGithubClicked = useCallback(() => {
 			setShowGithubInfo(!showGithubInfo)
+			if (!showGithubInfo) {
+				generateRepoName()
+			}
 		}, [showGithubInfo])
 
-		const handleDeployToGithub = useCallback(
-			async (html: string) => {
-				console.log('deploy to github')
-				try {
-					const sUrl = await deployToGithub(html)
-				} catch (e) {
-					console.error(e)
-					addToast({
-						icon: 'cross-2',
-						title: 'Something went wrong',
-						description: (e as Error).message.slice(0, 100),
-					})
-				}
-			},
-			[editor, addToast]
-		)
+		const handleDeploy = useCallback(async () => {
+			console.log('deploy to github')
+			try {
+				const oResponse = await deployToGithub(inputValue, shape.props.html)
+				debugger
+			} catch (e) {
+				console.error(e)
+				addToast({
+					icon: 'cross-2',
+					title: 'Something went wrong',
+					description: (e as Error).message.slice(0, 100),
+				})
+			}
+		}, [inputValue, shape.props.html])
 
 		return (
 			<HTMLContainer className="tl-embed-container" id={shape.id}>
@@ -113,7 +156,7 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 						<label style={{ whiteSpace: 'nowrap' }} htmlFor="github-input">
 							Repo Name:
 						</label>
-						<input id="github-input" onChange={handleInputChange} />
+						<input id="github-input" onChange={handleInputChange} value={inputValue} />
 						<button
 							className="deployButton"
 							onClick={handleDeploy}
@@ -166,7 +209,7 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 						justifyContent: 'center',
 						cursor: 'pointer',
 						pointerEvents: 'all',
-						color: showGithubInfo ? 'grey' : 'black'
+						color: showGithubInfo ? 'grey' : 'black',
 					}}
 					onClick={() => {
 						handleGithubClicked()

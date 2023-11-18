@@ -149,10 +149,10 @@
 .github-info {
 	position: absolute;
 	top: 65px;
-	right: -210px;
+	right: -160px;
 	display: flex;
 	flex-direction: column;
-	width: 200px;
+	width: 150px;
 	background-color: var(--color-low);
 	border-radius: 8px;
 	padding: 12px;
