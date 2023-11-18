@@ -9,7 +9,10 @@ import {
 	toDomPrecision,
 	useIsEditing,
 	useToasts,
+	useEditor,
 } from '@tldraw/tldraw'
+import { useCallback } from 'react'
+import { deployToGithub } from '../lib/deployToGithub'
 
 export type ResponseShape = TLBaseShape<
 	'response',
@@ -39,6 +42,23 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 	override component(shape: ResponseShape) {
 		const isEditing = useIsEditing(shape.id)
 		const toast = useToasts()
+		const editor = useEditor()
+		const { addToast } = useToasts()
+
+		const handleDeployToGithub = useCallback(async (html: String) => {
+			console.log('deploy to github')
+			try {
+				await deployToGithub(html)
+			} catch (e) {
+				console.error(e)
+				addToast({
+					icon: 'cross-2',
+					title: 'Something went wrong',
+					description: (e as Error).message.slice(0, 100),
+				})
+			}
+		}, [editor, addToast])
+
 		return (
 			<HTMLContainer className="tl-embed-container" id={shape.id}>
 				{shape.props.html ? (
@@ -93,6 +113,26 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 					onPointerDown={stopEventPropagation}
 				>
 					<Icon icon="duplicate" />
+				</div>
+				<div
+					style={{
+						position: 'absolute',
+						top: 30,
+						right: -40,
+						height: 40,
+						width: 40,
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'center',
+						cursor: 'pointer',
+						pointerEvents: 'all',
+					}}
+					onClick={() => {
+						handleDeployToGithub(shape.props.html)
+					}}
+					onPointerDown={stopEventPropagation}
+				>
+					<Icon icon="github" />
 				</div>
 			</HTMLContainer>
 		)
