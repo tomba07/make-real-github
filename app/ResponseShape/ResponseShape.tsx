@@ -125,6 +125,9 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 
 			try {
 				setIsDeploying(true)
+				setRepoUrl('')
+				setPagesUrl('')
+				setIsPageDeployed(false)
 				const response = await deployToGithub(
 					inputValue,
 					shape.props.html,
@@ -301,20 +304,21 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 										alignItems: 'center',
 										display: 'flex',
 										gap: '4px',
+										cursor: isPageDeployed ? 'auto' : 'wait',
 									}}
+									title={
+										isPageDeployed
+											? ''
+											: 'The page is still deploying... This usually takes 1-2 minutes'
+									}
 								>
 									<a
 										href={pagesUrl}
 										target="_blank"
 										rel="noopener noreferrer"
 										onPointerDown={stopEventPropagation}
-										title={
-											isPageDeployed
-												? ''
-												: 'The page is still deploying... This usually takes 1-2 minutes'
-										}
 										style={{
-											cursor: isPageDeployed ? 'pointer' : 'busy',
+											cursor: isPageDeployed ? 'pointer' : 'wait',
 											opacity: isPageDeployed ? 1 : 0.5,
 											pointerEvents: isPageDeployed ? 'auto' : 'none',
 										}}
