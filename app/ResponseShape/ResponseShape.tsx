@@ -196,7 +196,7 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 									cursor: !inputValue?.trim() || isDeploying ? 'auto' : 'pointer',
 								}}
 							>
-								Deploy
+								Create Repo
 							</button>
 							{isDeploying && <DefaultSpinner />}
 						</div>
