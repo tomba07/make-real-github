@@ -60,6 +60,13 @@
 	bottom: 120px;
 }
 
+.your-own-api-key.github-token.your-own-api-key__mobile {
+	bottom: 156px;
+}
+.your-own-api-key__mobile.github-token input {
+	bottom: 156px;
+}
+
 .github-token .input__wrapper:not(:focus-within)::after {
 	content: 'Your Github Token (risky but cool)';
 }
