@@ -273,6 +273,7 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 								className="deployButton"
 								onClick={handleDeploy}
 								onPointerDown={stopEventPropagation}
+								onTouchEnd={stopEventPropagation}
 								disabled={!inputValue?.trim() || isDeploying}
 								style={{
 									opacity: !inputValue?.trim() || isDeploying ? 0.5 : 1,
@@ -298,6 +299,7 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 									target="_blank"
 									rel="noopener noreferrer"
 									onPointerDown={stopEventPropagation}
+									onTouchEnd={stopEventPropagation}
 								>
 									Link to Repo
 								</a>
@@ -319,6 +321,7 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 										target="_blank"
 										rel="noopener noreferrer"
 										onPointerDown={stopEventPropagation}
+										onTouchEnd={stopEventPropagation}
 										style={{
 											cursor: isPageDeployed ? 'pointer' : 'wait',
 											opacity: isPageDeployed ? 1 : 0.5,

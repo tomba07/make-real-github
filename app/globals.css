@@ -171,6 +171,7 @@
 	background-color: var(--color-low);
 	border-radius: 8px;
 	padding: 14px;
+	pointer-events: none;
 }
 
 .github-info input {
@@ -185,6 +186,7 @@
 	font-size: 12px;
 	font-family: Inter, sans-serif;
 	color: var(--color-text-0);
+	pointer-events: all;
 }
 
 .deployButton {
