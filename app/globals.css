@@ -157,13 +157,13 @@
 .github-info {
 	position: absolute;
 	top: 65px;
-	right: -160px;
+	right: -210px;
 	display: flex;
 	flex-direction: column;
-	width: 150px;
+	width: 200px;
 	background-color: var(--color-low);
 	border-radius: 8px;
-	padding: 12px;
+	padding: 14px;
 }
 
 .github-info input {
@@ -190,5 +190,13 @@
 	margin: var(--space-1);
 	padding: 6px;
 	pointer-events: all;
-	width: 100px
+	width: 100%;
+}
+
+.githubLinkContainer {
+	padding-top: 'var(--space-3)';
+	padding-left: 'var(--space-3)';
+	pointer-events: 'all';
+	display: 'flex';
+	flex-direction: 'column';
 }

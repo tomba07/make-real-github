@@ -171,61 +171,6 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 						<DefaultSpinner />
 					</div>
 				)}
-				{showGithubInfo && (
-					<div className="github-info">
-						<label style={{ whiteSpace: 'nowrap' }} htmlFor="github-input">
-							Repo Name:
-						</label>
-						<input id="github-input" onChange={handleInputChange} value={inputValue} />
-						<div
-							style={{
-								display: 'flex',
-								flex: 'row',
-								gap: '4px',
-								alignItems: 'center',
-								marginTop: 'var(--space-4)',
-							}}
-						>
-							<button
-								className="deployButton"
-								onClick={handleDeploy}
-								onPointerDown={stopEventPropagation}
-								disabled={!inputValue?.trim() || isDeploying}
-								style={{
-									opacity: !inputValue?.trim() || isDeploying ? 0.5 : 1,
-									cursor: !inputValue?.trim() || isDeploying ? 'auto' : 'pointer',
-								}}
-							>
-								Create Repo
-							</button>
-							{isDeploying && <DefaultSpinner />}
-						</div>
-						{repoUrl && (
-							<div style={{ marginTop: 'var(--space-4)', pointerEvents: 'all' }}>
-								<a
-									href={repoUrl}
-									target="_blank"
-									rel="noopener noreferrer"
-									onPointerDown={stopEventPropagation}
-								>
-									Link to Repo
-								</a>
-							</div>
-						)}
-						{pagesUrl && (
-							<div>
-								<a
-									href={pagesUrl}
-									target="_blank"
-									rel="noopener noreferrer"
-									onPointerDown={stopEventPropagation}
-								>
-									Link to Page
-								</a>
-							</div>
-						)}
-					</div>
-				)}
 				<div
 					style={{
 						position: 'absolute',
@@ -273,6 +218,65 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 				>
 					<Icon icon="github" />
 				</div>
+				{showGithubInfo && (
+					<div className="github-info">
+						<label style={{ whiteSpace: 'nowrap' }} htmlFor="github-input">
+							Repo Name:
+						</label>
+						<input id="github-input" onChange={handleInputChange} value={inputValue} />
+						<div
+							style={{
+								display: 'flex',
+								flex: 'row',
+								gap: '4px',
+								alignItems: 'center',
+								marginTop: 'var(--space-3)',
+							}}
+						>
+							<button
+								className="deployButton"
+								onClick={handleDeploy}
+								onPointerDown={stopEventPropagation}
+								disabled={!inputValue?.trim() || isDeploying}
+								style={{
+									opacity: !inputValue?.trim() || isDeploying ? 0.5 : 1,
+									cursor: !inputValue?.trim() || isDeploying ? 'wait' : 'pointer',
+								}}
+							>
+								Create Repo & Page
+							</button>
+						</div>
+						{repoUrl && pagesUrl && (
+							<div
+							className='githubLinkContainer'
+								style={{
+									paddingTop: 'var(--space-3)',
+									paddingLeft: 'var(--space-3)',
+									pointerEvents: 'all',
+									display: 'flex',
+									flexDirection: 'column',
+								}}
+							>
+								<a
+									href={repoUrl}
+									target="_blank"
+									rel="noopener noreferrer"
+									onPointerDown={stopEventPropagation}
+								>
+									Link to Repo
+								</a>
+								<a
+									href={pagesUrl}
+									target="_blank"
+									rel="noopener noreferrer"
+									onPointerDown={stopEventPropagation}
+								>
+									Link to Page
+								</a>
+							</div>
+						)}
+					</div>
+				)}
 			</HTMLContainer>
 		)
 	}
