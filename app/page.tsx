@@ -23,8 +23,8 @@ export default function App() {
 				shapeUtils={shapeUtils}
 			>
 				<TldrawLogo />
-				{/* <RiskyButCoolAPIKeyInput />
-				<RiskyButCoolGithubTokenInput /> */}
+				<RiskyButCoolAPIKeyInput />
+				<RiskyButCoolGithubTokenInput />
 			</Tldraw>
 		</div>
 	)
