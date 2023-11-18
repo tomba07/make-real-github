@@ -22,12 +22,13 @@ export async function deployToGithub(
 	})
 
 	const repoData = response.data,
-		repoUrl = repoData.full_name
+		fullName = repoData.full_name,
+		repoUrl = repoData.html_url
 
 	console.log('Repository created:', repoData)
-	await addHtmlContent(repoUrl, htmlContent)
+	await addHtmlContent(fullName, htmlContent)
 	console.log('HTML content added')
-	const pagesUrl = await enableGitHubPages(repoUrl)
+	const pagesUrl = await enableGitHubPages(fullName)
 
 	return { pagesUrl, repoUrl }
 }

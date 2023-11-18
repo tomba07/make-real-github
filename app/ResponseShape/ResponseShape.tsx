@@ -180,17 +180,27 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 						>
 							Deploy
 						</button>
-						{pagesUrl && (
-							<div style={{ marginTop: 'var(--space-4)' }}>
-								<a href={pagesUrl} target="_blank" rel="noopener noreferrer">
-									Link to Page
+						{repoUrl && (
+							<div style={{ marginTop: 'var(--space-4)', pointerEvents: 'all' }}>
+								<a
+									href={repoUrl}
+									target="_blank"
+									rel="noopener noreferrer"
+									onPointerDown={stopEventPropagation}
+								>
+									Link to Repo
 								</a>
 							</div>
 						)}
-						{repoUrl && (
+						{pagesUrl && (
 							<div>
-								<a href={repoUrl} target="_blank" rel="noopener noreferrer">
-									Link to Repo
+								<a
+									href={pagesUrl}
+									target="_blank"
+									rel="noopener noreferrer"
+									onPointerDown={stopEventPropagation}
+								>
+									Link to Page
 								</a>
 							</div>
 						)}
