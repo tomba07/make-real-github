@@ -154,8 +154,10 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 		}, [inputValue, shape.props.html])
 
 		const startPollingPage = async (pagesUrl: string) => {
-			const MAX_ATTEMPTS = 24 // 2 minutes at 5-second intervals
-			const POLLING_INTERVAL = 5000 // 5 seconds
+			//Since I couldn't find a nicer way to check if the page is deployed, we implement
+			// a simple polling
+			const MAX_ATTEMPTS = 24
+			const POLLING_INTERVAL = 5000
 
 			for (let i = 0; i < MAX_ATTEMPTS; i++) {
 				const deployed = await checkGitHubPagesDeployment(pagesUrl)
