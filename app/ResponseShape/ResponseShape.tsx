@@ -314,7 +314,7 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 												: 'The page is still deploying... This usually takes 1-2 minutes'
 										}
 										style={{
-											cursor: isPageDeployed ? 'auto' : 'busy',
+											cursor: isPageDeployed ? 'pointer' : 'busy',
 											opacity: isPageDeployed ? 1 : 0.5,
 											pointerEvents: isPageDeployed ? 'auto' : 'none',
 										}}
