@@ -12,7 +12,8 @@ export async function deployToGithub(
 	htmlContent: string,
 	providedApiKey: string | undefined
 ): Promise<RepoCreationResponse> {
-	const token = (providedApiKey && providedApiKey.trim().length > 0) ? providedApiKey : process.env.GITHUB_TOKEN
+	const token =
+		providedApiKey && providedApiKey.trim().length > 0 ? providedApiKey : process.env.GITHUB_TOKEN
 	const octokit = new Octokit({ auth: token })
 	// Create a new repository
 	const response = await octokit.request('POST /user/repos', {
@@ -31,6 +32,21 @@ export async function deployToGithub(
 	const pagesUrl = await enableGitHubPages(fullName, octokit)
 
 	return { pagesUrl, repoUrl }
+}
+
+export async function checkGitHubPagesDeployment(pagesUrl: string) {
+	try {
+		const response = await fetch(pagesUrl)
+
+		if (response.ok) {
+			console.log('GitHub Pages deployed successfully.')
+			return true
+		} else {
+			console.log(`Site not deployed yet.`)
+		}
+	} catch (error) {
+		console.error('Error checking GitHub Pages:', error)
+	}
 }
 
 async function addHtmlContent(repoFullName: string, htmlContent: string, octokit: Octokit) {

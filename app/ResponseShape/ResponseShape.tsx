@@ -12,7 +12,7 @@ import {
 	useEditor,
 } from '@tldraw/tldraw'
 import { ChangeEvent, useState, useCallback } from 'react'
-import { deployToGithub } from '../lib/deployToGithub'
+import { deployToGithub, checkGitHubPagesDeployment } from '../lib/deployToGithub'
 import {
 	GPT4VCompletionResponse,
 	GPT4VMessage,
@@ -55,6 +55,7 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 		const [repoUrl, setRepoUrl] = useState('')
 		const [showGithubInfo, setShowGithubInfo] = useState(false)
 		const [isDeploying, setIsDeploying] = useState(false)
+		const [isPageDeployed, setIsPageDeployed] = useState(false)
 
 		const handleInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
 			setInputValue(e.target.value)
@@ -118,11 +119,21 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 		}, [showGithubInfo])
 
 		const handleDeploy = useCallback(async () => {
+			const githubTokenFromDangerousInput = (
+				document.body.querySelector('#github_token') as HTMLInputElement
+			)?.value
+
 			try {
 				setIsDeploying(true)
-				const response = await deployToGithub(inputValue, shape.props.html)
-				setPagesUrl(response.pagesUrl)
+				const response = await deployToGithub(
+					inputValue,
+					shape.props.html,
+					githubTokenFromDangerousInput
+				)
+
 				setRepoUrl(response.repoUrl)
+				setPagesUrl(response.pagesUrl)
+				startPollingPage(response.pagesUrl)
 			} catch (e: any) {
 				console.error(e)
 				let description
@@ -141,6 +152,23 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 				setIsDeploying(false)
 			}
 		}, [inputValue, shape.props.html])
+
+		const startPollingPage = async (pagesUrl: string) => {
+			const MAX_ATTEMPTS = 24 // 2 minutes at 5-second intervals
+			const POLLING_INTERVAL = 5000 // 5 seconds
+
+			for (let i = 0; i < MAX_ATTEMPTS; i++) {
+				const deployed = await checkGitHubPagesDeployment(pagesUrl)
+				if (deployed) {
+					setIsPageDeployed(true)
+				} else {
+					await new Promise((resolve) => setTimeout(resolve, POLLING_INTERVAL))
+				}
+			}
+
+			console.log('Polling reached maximum attempts.')
+			setIsPageDeployed(true)
+		}
 
 		return (
 			<HTMLContainer className="tl-embed-container" id={shape.id}>
@@ -248,7 +276,7 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 						</div>
 						{repoUrl && pagesUrl && (
 							<div
-							className='githubLinkContainer'
+								className="githubLinkContainer"
 								style={{
 									paddingTop: 'var(--space-3)',
 									paddingLeft: 'var(--space-3)',
@@ -265,14 +293,33 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 								>
 									Link to Repo
 								</a>
-								<a
-									href={pagesUrl}
-									target="_blank"
-									rel="noopener noreferrer"
-									onPointerDown={stopEventPropagation}
+								<div
+									style={{
+										alignItems: 'center',
+										display: 'flex',
+										gap: '4px',
+									}}
 								>
-									Link to Page
-								</a>
+									<a
+										href={pagesUrl}
+										target="_blank"
+										rel="noopener noreferrer"
+										onPointerDown={stopEventPropagation}
+										title={
+											isPageDeployed
+												? ''
+												: 'The page is still deploying... This usually takes 1-2 minutes'
+										}
+										style={{
+											cursor: isPageDeployed ? 'auto' : 'busy',
+											opacity: isPageDeployed ? 1 : 0.5,
+											pointerEvents: isPageDeployed ? 'auto' : 'none',
+										}}
+									>
+										Link to Page
+									</a>
+									{!isPageDeployed && <DefaultSpinner />}
+								</div>
 							</div>
 						)}
 					</div>
