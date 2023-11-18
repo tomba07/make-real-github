@@ -51,6 +51,8 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 		const editor = useEditor()
 		const { addToast } = useToasts()
 		const [inputValue, setInputValue] = useState('')
+		const [pagesUrl, setPagesUrl] = useState('')
+		const [repoUrl, setRepoUrl] = useState('')
 		const [showGithubInfo, setShowGithubInfo] = useState(false)
 
 		const handleInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
@@ -110,16 +112,23 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 		}, [showGithubInfo])
 
 		const handleDeploy = useCallback(async () => {
-			console.log('deploy to github')
 			try {
-				const oResponse = await deployToGithub(inputValue, shape.props.html)
-				debugger
-			} catch (e) {
+				const response = await deployToGithub(inputValue, shape.props.html)
+				setPagesUrl(response.pagesUrl)
+				setRepoUrl(response.repoUrl)
+			} catch (e: any) {
 				console.error(e)
+				let description
+				if (e?.message?.includes('name already exists on this account')) {
+					description =
+						'The repository name already exists on your account. Please choose a different name.'
+				} else {
+					description = (e as Error).message.slice(0, 100)
+				}
 				addToast({
 					icon: 'cross-2',
 					title: 'Something went wrong',
-					description: (e as Error).message.slice(0, 100),
+					description,
 				})
 			}
 		}, [inputValue, shape.props.html])
@@ -171,6 +180,20 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 						>
 							Deploy
 						</button>
+						{pagesUrl && (
+							<div style={{ marginTop: 'var(--space-4)' }}>
+								<a href={pagesUrl} target="_blank" rel="noopener noreferrer">
+									Link to Page
+								</a>
+							</div>
+						)}
+						{repoUrl && (
+							<div>
+								<a href={repoUrl} target="_blank" rel="noopener noreferrer">
+									Link to Repo
+								</a>
+							</div>
+						)}
 					</div>
 				)}
 				<div

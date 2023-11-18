@@ -6,8 +6,8 @@ const token = process.env.GITHUB_API_KEY
 const octokit = new Octokit({ auth: token })
 
 export type RepoCreationResponse = {
-	repoUrl: string | undefined
-	pagesUrl: string | undefined
+	repoUrl: string
+	pagesUrl: string
 }
 
 export async function deployToGithub(
@@ -30,23 +30,6 @@ export async function deployToGithub(
 	const pagesUrl = await enableGitHubPages(repoUrl)
 
 	return { pagesUrl, repoUrl }
-}
-
-async function addReadme(repoName: string) {
-	try {
-		const content = 'Hello, World! This is a README file.'
-		await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
-			owner: repoName.split('/')[0],
-			repo: repoName.split('/')[1],
-			path: 'README.md',
-			message: 'Initial commit with README',
-			content: btoa(content), // Base64 encode content
-		})
-
-		console.log('README added to the repository')
-	} catch (error) {
-		console.error('Error adding README:', error)
-	}
 }
 
 async function addHtmlContent(repoFullName: string, htmlContent: string) {
