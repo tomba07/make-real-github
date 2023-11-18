@@ -14,7 +14,7 @@ import { Octokit } from '@octokit/core'
 const token = process.env.GITHUB_API_KEY
 const octokit = new Octokit({ auth: token })
 
-export async function deployToGithub(htmlContent: string) {
+export async function deployToGithub(htmlContent: string): Promise<string> {
 	try {
 		// Create a new repository
 		const response = await octokit.request('POST /user/repos', {
@@ -29,8 +29,10 @@ export async function deployToGithub(htmlContent: string) {
 		// Add a README file
 		await addReadme(repoData.full_name)
 		await addHtmlContent(repoData.full_name, htmlContent)
+		return await enableGitHubPages(repoData.full_name)
 	} catch (error) {
 		console.error('Error creating repository:', error)
+		return ''
 	}
 }
 
@@ -64,5 +66,24 @@ async function addHtmlContent(repoFullName: string, htmlContent: string) {
 		console.log('HTML Content added to the repository')
 	} catch (error) {
 		console.error('Error adding HTML Content:', error)
+	}
+}
+
+async function enableGitHubPages(repoFullName: string): Promise<string>{
+	try {
+		await octokit.request('POST /repos/{owner}/{repo}/pages', {
+			owner: repoFullName.split('/')[0],
+			repo: repoFullName.split('/')[1],
+			source: {
+				branch: 'main',
+				path: '/',
+			},
+		})
+
+		console.log('GitHub Pages enabled for the repository')
+		return `https://${repoFullName.split('/')[0]}.github.io/${repoFullName.split('/')[1]}/`
+	} catch (error) {
+		console.error('Error enabling GitHub Pages:', error)
+		return ''
 	}
 }
