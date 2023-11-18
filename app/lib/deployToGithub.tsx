@@ -14,7 +14,7 @@ import { Octokit } from '@octokit/core'
 const token = process.env.GITHUB_API_KEY
 const octokit = new Octokit({ auth: token })
 
-export async function deployToGithub(html: String) {
+export async function deployToGithub(htmlContent: string) {
 	try {
 		// Create a new repository
 		const response = await octokit.request('POST /user/repos', {
@@ -28,27 +28,41 @@ export async function deployToGithub(html: String) {
 
 		// Add a README file
 		await addReadme(repoData.full_name)
+		await addHtmlContent(repoData.full_name, htmlContent)
 	} catch (error) {
 		console.error('Error creating repository:', error)
 	}
 }
 
-async function addReadme(repoName: String) {
-	const content = 'Hello, World! This is a README file.'
-	const response = await fetch(
-		`https://api.github.com/repos/YOUR_GITHUB_USERNAME/${repoName}/contents/README.md`,
-		{
-			method: 'PUT',
-			headers: {
-				Authorization: `token ${token}`,
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				message: 'Initial commit with README',
-				content: btoa(content), // Base64 encode content
-			}),
-		}
-	)
+async function addReadme(repoName: string) {
+	try {
+		const content = 'Hello, World! This is a README file.'
+		await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
+			owner: repoName.split('/')[0],
+			repo: repoName.split('/')[1],
+			path: 'README.md',
+			message: 'Initial commit with README',
+			content: btoa(content), // Base64 encode content
+		})
 
-	return response.json()
+		console.log('README added to the repository')
+	} catch (error) {
+		console.error('Error adding README:', error)
+	}
+}
+
+async function addHtmlContent(repoFullName: string, htmlContent: string) {
+	try {
+		await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
+			owner: repoFullName.split('/')[0],
+			repo: repoFullName.split('/')[1],
+			path: 'index.html',
+			message: 'Add HTML Content',
+			content: btoa(htmlContent), // Base64 encode content
+		})
+
+		console.log('HTML Content added to the repository')
+	} catch (error) {
+		console.error('Error adding HTML Content:', error)
+	}
 }
