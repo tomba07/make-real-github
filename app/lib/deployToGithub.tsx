@@ -19,7 +19,7 @@ export async function deployToGithub(
 	const response = await octokit.request('POST /user/repos', {
 		name: repoName,
 		private: false,
-		description: 'This is a new repository',
+		description: `${repoName} made real with tldraw and ChatGPT Vision!`,
 	})
 
 	const repoData = response.data,
