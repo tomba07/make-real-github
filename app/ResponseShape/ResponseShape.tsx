@@ -77,7 +77,12 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 
 				populateRepoNameInput(openAiResponse)
 			} catch (e) {
-				throw e
+				console.error(e)
+				addToast({
+					icon: 'cross-2',
+					title: 'Something went wrong',
+					description: (e as Error).message.slice(0, 100),
+				})
 			}
 		}
 
@@ -172,7 +177,15 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 							Repo Name:
 						</label>
 						<input id="github-input" onChange={handleInputChange} value={inputValue} />
-						<div style={{ display: 'flex', flex: 'row', gap: '4px', alignItems: 'center', marginTop: 'var(--space-4)' }}>
+						<div
+							style={{
+								display: 'flex',
+								flex: 'row',
+								gap: '4px',
+								alignItems: 'center',
+								marginTop: 'var(--space-4)',
+							}}
+						>
 							<button
 								className="deployButton"
 								onClick={handleDeploy}

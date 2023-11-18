@@ -6,6 +6,7 @@ import { MakeRealButton } from './components/MakeRealButton'
 import { TldrawLogo } from './components/TldrawLogo'
 import { ResponseShapeUtil } from './ResponseShape/ResponseShape'
 import { RiskyButCoolAPIKeyInput } from './components/RiskyButCoolAPIKeyInput'
+import { RiskyButCoolGithubTokenInput } from './components/RiskyButCoolGithubTokenInput'
 
 const Tldraw = dynamic(async () => (await import('@tldraw/tldraw')).Tldraw, {
 	ssr: false,
@@ -22,7 +23,8 @@ export default function App() {
 				shapeUtils={shapeUtils}
 			>
 				<TldrawLogo />
-				{/* <RiskyButCoolAPIKeyInput /> */}
+				<RiskyButCoolAPIKeyInput />
+				<RiskyButCoolGithubTokenInput />
 			</Tldraw>
 		</div>
 	)

@@ -2,9 +2,6 @@
 
 import { Octokit } from '@octokit/core'
 
-const token = process.env.GITHUB_API_KEY
-const octokit = new Octokit({ auth: token })
-
 export type RepoCreationResponse = {
 	repoUrl: string
 	pagesUrl: string
@@ -12,8 +9,11 @@ export type RepoCreationResponse = {
 
 export async function deployToGithub(
 	repoName: string,
-	htmlContent: string
+	htmlContent: string,
+	providedApiKey: string | undefined
 ): Promise<RepoCreationResponse> {
+	const token = (providedApiKey && providedApiKey.trim().length > 0) ? providedApiKey : process.env.GITHUB_TOKEN
+	const octokit = new Octokit({ auth: token })
 	// Create a new repository
 	const response = await octokit.request('POST /user/repos', {
 		name: repoName,
@@ -26,14 +26,14 @@ export async function deployToGithub(
 		repoUrl = repoData.html_url
 
 	console.log('Repository created:', repoData)
-	await addHtmlContent(fullName, htmlContent)
+	await addHtmlContent(fullName, htmlContent, octokit)
 	console.log('HTML content added')
-	const pagesUrl = await enableGitHubPages(fullName)
+	const pagesUrl = await enableGitHubPages(fullName, octokit)
 
 	return { pagesUrl, repoUrl }
 }
 
-async function addHtmlContent(repoFullName: string, htmlContent: string) {
+async function addHtmlContent(repoFullName: string, htmlContent: string, octokit: Octokit) {
 	try {
 		await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
 			owner: repoFullName.split('/')[0],
@@ -49,7 +49,7 @@ async function addHtmlContent(repoFullName: string, htmlContent: string) {
 	}
 }
 
-async function enableGitHubPages(repoFullName: string): Promise<string> {
+async function enableGitHubPages(repoFullName: string, octokit: Octokit): Promise<string> {
 	try {
 		await octokit.request('POST /repos/{owner}/{repo}/pages', {
 			owner: repoFullName.split('/')[0],

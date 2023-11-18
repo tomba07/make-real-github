@@ -54,7 +54,15 @@
 	opacity: 0.95;
 }
 
-/* ------------------ Api Key Input ----------------- */
+/* ------------------ Api Key Inputs ----------------- */
+
+.your-own-api-key.github-token {
+	bottom: 120px;
+}
+
+.github-token .input__wrapper:not(:focus-within)::after {
+	content: 'Your Github Token (risky but cool)';
+}
 
 .your-own-api-key {
 	position: absolute;
