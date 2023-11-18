@@ -177,6 +177,7 @@
 	color: white;
 	border: none;
 	font: inherit;
+	font-weight: 600;
 	border-radius: var(--radius-2);
 	margin: var(--space-1);
 	padding: 6px;
