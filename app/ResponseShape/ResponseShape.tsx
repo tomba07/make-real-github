@@ -90,8 +90,10 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 			const userMessages: MessageContent = [
 				{
 					type: 'text',
-					text: `Create a meaningful github repository name for the following html file:
+					text: `Create a meaningful github repo name. Use all lower case and dashes. A sample name is 'sample-repo-name'. The content of the repo is the following html which is surrounded by """. The name should describe the core functionality of the HTML content:
+					"""
 					${shape.props.html}
+					"""
 					Respond ONLY with the repository name.`,
 				},
 			]
